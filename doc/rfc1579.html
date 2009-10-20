@@ -1,0 +1,295 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+<title>RFC 1579 (rfc1579) - Firewall-Friendly FTP</title>
+<meta name="description" content="RFC 1579 - Firewall-Friendly FTP">
+<style title="currentStyle" type="text/css" media="screen">
+@import 'http://faqs.org/abstracts/css/default.css';
+@import 'http://faqs.org/search.css';
+</style>
+<script type="text/javascript" src="rfc1579_files/utils.js"></script>
+<script language="JavaScript1.2">
+function erfc(s)
+{document.write("<A href=\"/rfccomment.php?rfcnum="+s+"\" target=\"_blank\" onclick=\"window.open('/rfccomment.php?rfcnum="+s+"','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=680,height=530,left=30,top=43'); return false;\")>Comment on RFC "+s+"</A>\n");}
+//-->
+</script>
+</head><body text="#000000" bgcolor="#ffffff">
+<div id="main" style="background: rgb(255, 255, 255) url(http://www.faqs.org/images/library.jpg) no-repeat scroll 50% 0%; text-align: left; padding-left: 1%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+<div align="center">[ <a href="http://www.faqs.org/rfcs/">RFC Index</a> | <a href="http://www.faqs.org/rfcs/rfcsearch.html">RFC Search</a> | <a href="http://www.faqs.org/faqs/">Usenet FAQs</a> | <a href="http://www.faqs.org/contrib/">Web FAQs</a> | <a href="http://www.faqs.org/docs/">Documents</a> | <a href="http://www.city-data.com/">Cities</a> ]
+<p>
+<strong>Alternate Formats:</strong>
+ <a href="http://www.faqs.org/ftp/rfc/rfc1579.txt">rfc1579.txt</a> |
+ <a href="http://www.faqs.org/ftp/rfc/pdf/rfc1579.txt.pdf">rfc1579.txt.pdf</a></p></div>
+<p align="center"><script language="JavaScript"><!--
+erfc("1579");
+// --></script><a href="http://www.faqs.org/rfccomment.php?rfcnum=1579" target="_blank" onclick="window.open('/rfccomment.php?rfcnum=1579','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=680,height=530,left=30,top=43'); return false;" )="">Comment on RFC 1579</a>
+</p>
+<h3 align="center">RFC 1579 - Firewall-Friendly FTP</h3>
+<hr size="2" noshade="noshade"><table style="margin: 0px auto; padding: 0px;" border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td valign="top" width="44%">
+<div id="ie_hack" style="margin: 0px; padding: 0px;">
+<div id="body_container" style="margin: 0px; padding: 0px;">
+<div class="article_container" style="margin: 0px; padding: 0px;">
+<ul style="margin-top: 0px;">
+<font size="4"><b>Search the Archives</b></font><li>
+<form action="http://www.faqs.org/rfcs/rfcresults.html" id="cse-search-box">
+  <div>
+    <input name="cx" value="012585674615115756003:0rnper8ld_o" type="hidden">
+    <input name="cof" value="FORID:11" type="hidden">
+    <input name="ie" value="UTF-8" type="hidden">
+    <input name="hq" value="more:rfc" type="hidden">
+    <input style="background: rgb(255, 255, 255) url(http://www.google.com/coop/intl/en/images/google_custom_search_watermark.gif) no-repeat scroll left center; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;" name="q" size="31" type="text">
+    <input name="sa" value="Search RFCs" type="submit">
+  </div>
+</form>
+<script type="text/javascript" src="rfc1579_files/brand.html"></script>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</td>
+
+<td valign="top" width="4%" align="center"><img src="rfc1579_files/vrule.gif" alt="" width="1" height="60"></td>
+
+<td valign="top" width="44%">
+	<form method="post" action="/cgi-bin/rfcdisplay">
+	<strong><font size="4"> Display RFC by number</font></strong>
+	<table border="0" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+	<td><input name="display" size="10"></td>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;<font size="-1"><input value="Display RFC By Number" type="submit"></font>
+</td>
+	</tr>
+	</tbody></table>
+	</form>
+</td>
+
+</tr>
+</tbody></table>
+<hr size="2" noshade="noshade"><br><div align="center"><h1>RFC1579 - Firewall-Friendly FTP</h1></div>
+<pre>
+Network Working Group                                        S. Bellovin
+Request for Comments: 1579                        AT&amp;T Bell Laboratories
+Category: Informational                                    February 1994
+
+                         Firewall-Friendly FTP
+
+Status of this Memo
+
+   This document provides information for the Internet community.  This
+   document does not specify an Internet standard of any kind.
+   Distribution of this document is unlimited.
+
+Abstract
+
+   This memo describes a suggested change to the behavior of FTP client
+   programs.  No protocol modifications are required, though we outline
+   some that might be useful.
+
+Overview and Rational
+
+   The FTP protocol [1] uses a secondary TCP connection for actual
+   transmission of files.  By default, this connection is set up by an
+   active open from the FTP server to the FTP client.  However, this
+   scheme does not work well with packet filter-based firewalls, which
+   in general cannot permit incoming calls to random port numbers.
+
+   If, on the other hand, clients use the PASV command, the data channel
+   will be an outgoing call through the firewall.  Such calls are more
+   easily handled, and present fewer problems.
+
+The Gory Details
+
+   The FTP specification says that by default, all data transfers should
+   be over a single connection.  An active open is done by the server,
+   from its port 20 to the same port on the client machine as was used
+   for the control connection.  The client does a passive open.
+
+   For better or worse, most current FTP clients do not behave that way.
+   A new connection is used for each transfer; to avoid running afoul of
+   TCP's TIMEWAIT state, the client picks a new port number each time
+   and sends a PORT command announcing that to the server.
+
+   Neither scenario is firewall-friendly.  If a packet filter is used
+   (as, for example, provided by most modern routers), the data channel
+   requests appear as incoming calls to unknown ports.  Most firewalls
+   are constructed to allow incoming calls only to certain believed-to-
+   be-safe ports, such as SMTP.  The usual compromise is to block only
+
+   the "server" area, i.e., port numbers below 1024.  But that strategy
+   is risky; dangerous services such as X Windows live at higher-
+   numbered ports.
+
+   Outgoing calls, on the other hand, present fewer problems, either for
+   the firewall administrator or for the packet filter.  Any TCP packet
+   with the ACK bit set cannot be the packet used to initiate a TCP
+   connection; filters can be configured to pass such packets in the
+   outbound direction only.  We thus want to change the behavior of FTP
+   so that the data channel is implemented as a call from the client to
+   the server.
+
+   Fortunately, the necessary mechanisms already exist in the protocol.
+   If the client sends a PASV command, the server will do a passive TCP
+   open on some random port, and inform the client of the port number.
+   The client can then do an active open to establish the connection.
+
+   There are a few FTP servers in existence that do not honor the PASV
+   command.  While this is unfortunate (and in violation of STD 3, RFC
+   1123 [2]), it does not pose a problem.  Non-conforming
+   implementations will return a "500 Command not understood" message;
+   it is a simple matter to fall back to current behavior.  While it may
+   not be possible to talk to such sites through a firewall, that would
+   have been the case had PASV not been adopted.
+
+Recommendation
+
+   We recommend that vendors convert their FTP client programs
+   (including FTP proxy agents such as Gopher [3] daemons) to use PASV
+   instead of PORT.  There is no reason not to use it even for non-
+   firewall transfers, and adopting it as standard behavior will make
+   the client more useful in a firewall environment.
+
+   STD 3, <a href="http://www.faqs.org/rfcs/rfc1123.html">RFC 1123</a> notes that the format of the response to a PASV
+   command is not well-defined.  We therefore recommend that FTP clients
+   and servers follow the recommendations of that RFC for solving this
+   problem.
+
+Discussion
+
+   Given the behavior of most current FTP clients, the use of PASV does
+   not cause any additional messages to be sent.  In all cases, a
+   transfer operation is preceded by an extra exchange between the
+   client and the server; it does not matter if that exchange involves a
+   PORT command or a PASV command.
+
+   There is some extra overhead with Gopher-style clients; since they
+   transfer exactly one file per control channel connection, they do not
+
+   need to use PORT commands.  If this is a serious concern, the Gopher
+   proxy should be located on the outside of the firewall, so that it is
+   not hampered by the packet filter's restrictions.
+
+   If we accept that clients should always perform active opens, it
+   might be worthwhile enhancing the FTP protocol to eliminate the extra
+   exchange entirely.  At startup time, the client could send a new
+   command APSV ("all passive"); a server that implements this option
+   would always do a passive open.  A new reply code 151 would be issued
+   in response to all file transfer requests not preceded by a PORT or
+   PASV command; this message would contain the port number to use for
+   that transfer.  A PORT command could still be sent to a server that
+   had previously received APSV; that would override the default
+   behavior for the next transfer operation, thus permitting third-party
+   transfers.
+
+Implementation Status
+
+   At least two independent implementations of the modified clients
+   exist.  Source code to one is freely available.  To our knowledge,
+   APSV has not been implemented.
+
+Security Considerations
+
+   Some people feel that packet filters are dangerous, since they are
+   very hard to configure properly.  We agree.  But they are quite
+   popular.  Another common complaint is that permitting arbitrary
+   outgoing calls is dangerous, since it allows free export of sensitive
+   data through a firewall.  Some firewalls impose artificial bandwidth
+   limits to discourage this.  While a discussion of the merits of this
+   approach is beyond the scope of this memo, we note that the sort of
+   application-level gateway necessary to implement a bandwidth limiter
+   could be implemented just as easily using PASV as with PORT.
+
+   Using PASV does enhances the security of gateway machines, since they
+   no longer need to create ports that an outsider might connect to
+   before the real FTP client.  More importantly, the protocol between
+   the client host and the firewall can be simplified, if there is no
+   need to specify a "create" operation.
+
+   Concerns have been expressed that this use of PASV just trades one
+   problem for another.  With it, the FTP server must accept calls to
+   random ports, which could pose an equal problem for its firewall.  We
+   believe that this is not a serious issue, for several reasons.
+
+   First, there are many fewer FTP servers than there are clients.  It
+   is possible to secure a small number of special-purpose machines,
+   such as gateways and organizational FTP servers.  The firewall's
+
+   filters can be configured to allow access to just these machines.
+   Further precautions can be taken by modifying the FTP server so that
+   it only uses very high-numbered ports for the data channel.  It is
+   comparatively easy to ensure that no dangerous services live in a
+   given port range.  Again, this is feasible because of the small
+   number of servers.
+
+References
+
+   [1] Postel, J., and J. Reynolds, "File Transfer Protocol", STD 1, RFC
+       959, USC/Information Sciences Institute, October 1985.
+
+   [2] Braden, R., Editor, "Requirements for Internet Hosts -
+       Application and Support", STD 3, <a href="http://www.faqs.org/rfcs/rfc1123.html">RFC 1123</a>, USC/Information
+       Sciences Institute, October 1989.
+
+   [3] Anklesaria, F., McCahill, M., Lindner, P., Johnson, D., Torrey,
+       D., and B. Alberti, "The Internet Gopher Protocol (a distributed
+       document search and retrieval protocol)", <a href="http://www.faqs.org/rfcs/rfc1436.html">RFC 1436</a>, University of
+       Minnesota, March 1993.
+
+Author's Address
+
+       Steven M. Bellovin
+       AT&amp;T Bell Laboratories
+       600 Mountain Avenue
+       Murray Hill, NJ  07974
+
+       Phone: (908) 582-5886
+       EMail: <a href="mailto:smb@research.att.com">smb@research.att.com</a>
+
+</pre>
+<p align="center"><script language="JavaScript"><!--
+erfc("1579");
+// --></script><a href="http://www.faqs.org/rfccomment.php?rfcnum=1579" target="_blank" onclick="window.open('/rfccomment.php?rfcnum=1579','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=680,height=530,left=30,top=43'); return false;" )="">Comment on RFC 1579</a>
+</p>
+&nbsp;<br>
+<div align="center">
+<center>
+<table width="100%" border="0" cellpadding="4" cellspacing="4">
+<tbody><tr><td width="100%" bgcolor="#d6d6c0">
+<p><font face="Arial">Comments about this RFC:</font></p>
+<ul>
+<li><font face="Arial"><a href="http://www.faqs.org/qa/rfcc-875.html">RFC 1579: There needs to be a solution where no high numbered ports are used.  There are...</a> by WisTex (9/20/2005)</font></li>
+</ul>
+</td></tr></tbody></table> <br></center></div>
+<div align="center">
+<table width="100%" border="0" cellpadding="3" cellspacing="3">
+<tbody><tr><td width="45%">
+<p align="left">Previous: <a href="http://www.faqs.org/rfcs/rfc1578.html">RFC 1578 - FYI on Questions and Answers - Answers to Commonly Asked "Primary and Secondary School Internet User" Questions</a>
+</p></td><td width="10%">&nbsp;</td><td width="45%">
+<p align="right">Next: <a href="http://www.faqs.org/rfcs/rfc1580.html">RFC 1580 - Guide to Network Resource Tools</a>
+</p></td></tr></tbody></table></div><p align="right">&nbsp;</p>
+<hr size="2" noshade="noshade">
+<div align="center">[ <a href="http://www.faqs.org/rfcs/">RFC Index</a> | <a href="http://www.faqs.org/rfcs/rfcsearch.html">RFC Search</a> | <a href="http://www.faqs.org/faqs/">Usenet FAQs</a> | <a href="http://www.faqs.org/contrib/">Web FAQs</a> | <a href="http://www.faqs.org/docs/">Documents</a> | <a href="http://www.city-data.com/">Cities</a> ]
+<p>
+</p></div>
+<small>
+<address>
+<p align="center">
+ 
+</p>
+</address>
+</small>
+</div>
+
+<div id="copy">© 2008 FAQS.ORG. All rights reserved.<br>
+<script language="JavaScript"><!--
+ema('contactfaqs','Contact Us');
+//--></script><a style="color: lightgoldenrodyellow;" href="mailto:contactfaqs@faqs.org">Contact Us</a>&nbsp;
+<script language="JavaScript"><!--
+esa('terms','Terms of Use');
+//--></script><a style="color: lightgoldenrodyellow;" href="http://www.faqs.org/terms.html">Terms of Use</a>
+</div>
+</body></html>

@@ -1,0 +1,55 @@
+set version	0.2
+
+tm "oodaemons" { #<<<
+	version $::version
+
+	requires {
+		cflib
+		sop
+	}
+
+	files {
+		scripts/uri.tcl
+		scripts/json.tcl
+	}
+
+	platform tcl
+}
+
+#>>>
+tm "oodaemons/ftpd" { #<<<
+	version $::version
+
+	requires {
+		oodaemons
+	}
+
+	files {
+		scripts/ftpd.tcl
+		scripts/ftpd_con.tcl
+	}
+
+	platform tcl
+}
+
+#>>>
+tm "oodaemons/httpd" { #<<<
+	version $::version
+
+	requires {
+		oodaemons
+	}
+
+	files {
+		scripts/httpd.tcl
+		scripts/httpd_con.tcl
+		scripts/httpd_req.tcl
+		scripts/mimetypes.tcl
+	}
+
+	platform tcl
+}
+
+#>>>
+
+# vim: ft=tcl foldmethod=marker foldmarker=<<<,>>> ts=4 shiftwidth=4
