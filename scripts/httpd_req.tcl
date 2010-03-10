@@ -77,6 +77,11 @@ oo::class create oodaemons::httpd::req {
 	}
 
 	#>>>
+	method headers {} { #<<<
+		set headers
+	}
+
+	#>>>
 	method send_response {respinfo} { #<<<
 		set respinfo	[dict merge {
 			code				200
@@ -87,7 +92,11 @@ oo::class create oodaemons::httpd::req {
 		} $respinfo]
 
 		if {[dict get $respinfo content-encoding] eq "binary"} {
-			dict set respinfo response-headers content-type "[dict get $respinfo mimetype]"
+			if {[dict exists $respinfo charset]} {
+				dict set respinfo response-headers content-type "[dict get $respinfo mimetype]; charset=[dict get $respinfo charset]"
+			} else {
+				dict set respinfo response-headers content-type "[dict get $respinfo mimetype]"
+			}
 		} else {
 			dict set respinfo response-headers content-type "[dict get $respinfo mimetype]; charset=[dict get $respinfo content-encoding]"
 			dict set respinfo response-headers content-encoding [dict get $respinfo content-encoding]
