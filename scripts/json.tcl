@@ -101,6 +101,11 @@ oo::class create oodaemons::json {
 	#>>>
 
 	method _quote_string {in} { #<<<
+		if {![namespace exists [self class]]} {
+			namespace eval [self class] {
+				variable map
+			}
+		}
 		upvar [self class]::map map
 		if {![info exists map]} {
 			set map [dict create \
