@@ -1,0 +1,3 @@
+*.swp
+examples/ftp_filestore.sqlite3
+tm
