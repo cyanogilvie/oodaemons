@@ -22,7 +22,7 @@ cflib::singleton create oodaemons::mimetypes {
 		set mimetypes		[dict create]
 		set mimetypes_raw	[cflib::readfile $mimetypes_fn]
 
-		puts stderr "Parsing $mimetypes_fn"
+		?? {puts stderr "Parsing $mimetypes_fn"}
 		foreach line [split $mimetypes_raw \n] {
 			set line	[string trim $line]
 			if {$line eq ""} continue
@@ -32,7 +32,7 @@ cflib::singleton create oodaemons::mimetypes {
 
 			foreach ext $exts {
 				if {[dict exists $mimetypes $ext]} {
-					puts stderr "Redefinition of mimetype for \"$ext\", was \"[dict get $mimetypes $ext]\", ignoring new type: \"$type\""
+					?? {puts stderr "Redefinition of mimetype for \"$ext\", was \"[dict get $mimetypes $ext]\", ignoring new type: \"$type\""}
 					continue
 				}
 				dict set mimetypes $ext $type

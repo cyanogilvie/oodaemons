@@ -125,6 +125,7 @@ oo::class create oodaemons::httpd::req {
 			parray error r
 		}
 		switch -- [dict get $request_line method] {
+			"OPTIONS" -
 			"GET" {
 				return [dict get $request_uri query]
 			}
@@ -253,7 +254,7 @@ oo::class create oodaemons::httpd::req {
 			dict set ::g_con_stats $con_seq requests [self] \
 					request_line $request_line
 		}
-		my log notice "$method [dict get [$uri as_dict] path]"
+		?? {my log debug "$method [dict get [$uri as_dict] path]"}
 
 		# TODO: verify $http_version
 
@@ -310,7 +311,7 @@ oo::class create oodaemons::httpd::req {
 		# Determine entity-body encoding >>>
 		?? {
 			set after_usec	[clock microseconds]
-			chan puts stderr "_set_headers_raw: [expr {$after_usec - $before_usec}]"
+			puts stderr "_set_headers_raw: [expr {$after_usec - $before_usec}]"
 		}
 	}
 
@@ -518,7 +519,6 @@ oo::class create oodaemons::httpd::req {
 
 	#>>>
 	method _unfold_headers {lines} { #<<<
-		?? {my log debug}
 		set out_lines	{}
 		set current_line	""
 		foreach line $lines {
@@ -691,7 +691,7 @@ oo::class create oodaemons::httpd::req {
 					[string trim [string range $param_term $idx+1 end]]
 		}
 
-		return [list $field_value $field_params]
+		list $field_value $field_params
 	}
 
 	#>>>

@@ -92,7 +92,6 @@ oo::class create oodaemons::httpd::con {
 	#>>>
 
 	method send_response {from code headers {entity_body ""}} { #<<<
-		?? {my log debug}
 		if {$from ne [self] && $from ne [lindex $req_pipeline 0]} {
 			dict set response_buffer $from [dict create \
 					from	$from \
@@ -323,7 +322,6 @@ oo::class create oodaemons::httpd::con {
 
 	#>>>
 	method _req_ready_changed {newstate} { #<<<
-		?? {my log debug}
 		if {$newstate} {
 			set linemode	1
 			try {

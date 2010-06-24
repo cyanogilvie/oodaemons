@@ -113,7 +113,7 @@ cflib::pclass create oodaemons::httpd {
 		my _close_listen
 
 		set listen	[socket -server [my code _accept] $port]
-		my log notice "Httpd ready on port $port"
+		?? {my log notice "Httpd ready on port $port"}
 	}
 
 	#>>>
