@@ -71,7 +71,7 @@ oo::class create oodaemons::uri {
 
 	#>>>
 	method as_dict {} { #<<<
-		return $parts
+		set parts
 	}
 
 	#>>>
@@ -127,7 +127,7 @@ oo::class create oodaemons::uri {
 			}
 		}
 
-		return $cached_encoding
+		set cached_encoding
 	}
 
 	#>>>
@@ -138,7 +138,7 @@ oo::class create oodaemons::uri {
 			lassign [split $term =] key val
 			dict set build [my _urldecode $key $encoding] [my _urldecode $val $encoding]
 		}
-		return $build
+		set build
 	}
 
 	#>>>
@@ -149,7 +149,7 @@ oo::class create oodaemons::uri {
 			set evalue	[my _hexhex_encode [encoding convertto $encoding $value]]
 			lappend terms	"${ekey}=${evalue}"
 		}
-		return [join $terms &]
+		join $terms &
 	}
 
 	#>>>
@@ -168,15 +168,13 @@ oo::class create oodaemons::uri {
 				query		[my query_decode $query $encoding] \
 				fragment	[my _urldecode $fragment $encoding] \
 		]
-
-		return $parts
 	}
 
 	#>>>
 	method _urldecode {data {encoding "utf-8"}} { #<<<
 		regsub -all {([][$\\])} $data {\\\1} data
 		regsub -all {%([0-9a-fA-F][0-9a-fA-F])} $data  {[binary format H2 \1]} data
-		return [encoding convertfrom $encoding [subst $data]]
+		encoding convertfrom $encoding [subst $data]
 	}
 
 	#>>>
@@ -209,7 +207,7 @@ oo::class create oodaemons::uri {
 				append out	[lindex $charmap $byte]
 			}
 		}
-		return $out
+		set out
 	}
 
 	#>>>

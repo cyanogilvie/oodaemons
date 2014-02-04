@@ -93,6 +93,7 @@ oo::class create oodaemons::httpd::con {
 
 	method send_response {from code headers {entity_body ""}} { #<<<
 		if {$from ne [self] && $from ne [lindex $req_pipeline 0]} {
+			?? {log debug "Storing response in response_buffer"}
 			dict set response_buffer $from [dict create \
 					from	$from \
 					code	$code \
@@ -138,7 +139,7 @@ oo::class create oodaemons::httpd::con {
 				chan configure $con \
 						-translation crlf \
 						-buffering line \
-						-encoding "ascii"
+						-encoding "iso8859-1"
 
 				while {1} {
 					set line		[chan gets $con]
@@ -233,7 +234,7 @@ oo::class create oodaemons::httpd::con {
 				chan configure $con \
 						-translation $translation \
 						-buffering line \
-						-encoding "ascii"
+						-encoding "iso8859-1"
 			}
 
 			"entity-body" {
@@ -355,7 +356,7 @@ oo::class create oodaemons::httpd::con {
 		?? {my log debug "entity_body:\n$entity_body"}
 		chan configure $con \
 				-translation crlf \
-				-encoding "ascii" \
+				-encoding "iso8859-1" \
 				-buffering full
 
 		try {
@@ -420,6 +421,11 @@ oo::class create oodaemons::httpd::con {
 	}
 
 	unexport log
+	#>>>
+	method socket {} { #<<<
+		set con
+	}
+
 	#>>>
 }
 

@@ -701,6 +701,11 @@ oo::class create oodaemons::httpd::req {
 
 	unexport log
 	#>>>
+	method socket {} { #<<<
+		$httpd_con socket
+	}
+
+	#>>>
 }
 
 

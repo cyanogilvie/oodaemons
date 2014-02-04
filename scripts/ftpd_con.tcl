@@ -192,7 +192,7 @@ oo::class create oodaemons::ftpd_con {
 				-blocking 0 \
 				-buffering line \
 				-translation crlf \
-				-encoding ascii
+				-encoding iso8859-1
 
 		while {1} {
 			set line	[gets $socket]
